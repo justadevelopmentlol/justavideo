@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+
+set -e
+
+URL="$1"
+DEST="${2:-$HOME/Downloads}"
+
+if [[ -z "$URL" || "$URL" == "--help" || "$URL" == "-h" ]]; then
+  echo "Usage: justavideo <video-url> [destination]"
+  exit 0
+fi
+
+if ! command -v yt-dlp >/dev/null 2>&1; then
+  echo "yt-dlp is not installed. Run the installer again."
+  exit 1
+fi
+
+if [[ ! -t 0 || ! -t 1 ]]; then
+  echo "An interactive terminal is required."
+  exit 1
+fi
+
+formats=()
+while IFS= read -r format; do
+  formats+=("$format")
+done < <(yt-dlp --no-playlist -F "$URL" | awk '$1 != "ID" && $2 == "mp4" && $3 ~ /^[0-9]+x[0-9]+$/ && $0 !~ /images/ && !seen[$3]++ { mode = ($0 ~ /video only/) ? "video-only" : "with-audio"; print $1 "\t" $3 " mp4\t" mode }')
+
+if [[ ${#formats[@]} -eq 0 ]]; then
+  echo "No video formats were found."
+  exit 1
+fi
+
+selected=0
+while true; do
+  printf '\033[2J\033[HSelect a resolution\nUse the arrow keys and Enter. Press q to cancel.\n\n'
+  for index in "${!formats[@]}"; do
+    IFS=$'\t' read -r format_id label mode <<< "${formats[$index]}"
+    if [[ $index -eq $selected ]]; then printf '› %s\n' "$label"; else printf '  %s\n' "$label"; fi
+  done
+  IFS= read -rsn1 key
+  case "$key" in
+    $'\x1b') IFS= read -rsn2 sequence || true; case "$sequence" in '[A') if (( selected > 0 )); then selected=$((selected - 1)); fi;; '[B') if (( selected < ${#formats[@]} - 1 )); then selected=$((selected + 1)); fi;; '') exit 0;; esac;;
+    ''|$'\n'|$'\r') break;;
+    q|Q) exit 0;;
+  esac
+done
+
+IFS=$'\t' read -r format_id label mode <<< "${formats[$selected]}"
+if [[ "$mode" == "video-only" ]]; then format_selector="$format_id+bestaudio[ext=m4a]/$format_id+bestaudio/$format_id"; else format_selector="$format_id"; fi
+mkdir -p "$DEST"
+yt-dlp --no-playlist -f "$format_selector" --merge-output-format mp4 --embed-thumbnail --add-metadata --progress -o "$DEST/%(title)s.%(ext)s" "$URL"
+echo "Saved to $DEST"
