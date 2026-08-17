@@ -7,13 +7,16 @@ BIN_DIR="$INSTALL_DIR/bin"
 
 progress() {
   local msg="$1"
-  local steps=20
-  printf "%s " "$msg"
-  for i in $(seq 1 $steps); do
-    printf "#"
+  local steps=24
+  local bar=""
+  local percent
+  for ((i = 1; i <= steps; i++)); do
+    bar="${bar}="
+    percent=$((i * 100 / steps))
+    printf "\r\033[K%s [%-24s] %3d%%" "$msg" "$bar" "$percent"
     sleep 0.02
   done
-  printf " done\n"
+  printf "\n"
 }
 
 detect_platform() {
