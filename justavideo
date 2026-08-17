@@ -2,6 +2,16 @@
 
 set -e
 
+RED=$'\033[31m'
+YELLOW=$'\033[33m'
+GREEN=$'\033[32m'
+BLUE=$'\033[34m'
+MAGENTA=$'\033[35m'
+CYAN=$'\033[36m'
+WHITE=$'\033[37m'
+GRAY=$'\033[90m'
+RESET=$'\033[0m'
+
 URL="$1"
 DEST="${2:-$HOME/Downloads}"
 
@@ -23,6 +33,32 @@ fi
 SELECTED_INDEX=0
 SELECTED_VALUE=""
 
+colorize_output() {
+  local line color
+  while IFS= read -r line; do
+    color="$WHITE"
+    case "$line" in
+      \[youtube\]*) color="$RED";;
+      \[info\]*) color="$YELLOW";;
+      \[download\]*) color="$BLUE";;
+      \[error\]*|ERROR:*) color="$RED";;
+      \[Metadata\]*|\[metadata\]*) color="$MAGENTA";;
+      \[ExtractAudio\]*|\[Merger\]*) color="$CYAN";;
+      \[warning\]*) color="$YELLOW";;
+      \[debug\]*) color="$GRAY";;
+    esac
+    printf '%s%s%s\n' "$color" "$line" "$RESET"
+  done
+}
+
+run_yt_dlp() {
+  set +e
+  yt-dlp "$@" 2>&1 | colorize_output
+  local status=${PIPESTATUS[0]}
+  set -e
+  return "$status"
+}
+
 select_option() {
   local title="$1"
   shift
@@ -34,7 +70,7 @@ select_option() {
     printf '\033[2J\033[H%s\nUse the arrow keys and Enter. Press q to cancel.\n\n' "$title"
     for index in "${!options[@]}"; do
       if [[ $index -eq $selected ]]; then
-        printf '› %s\n' "${options[$index]}"
+        printf '%s› %s%s\n' "$GREEN" "${options[$index]}" "$RESET"
       else
         printf '  %s\n' "${options[$index]}"
       fi
@@ -90,13 +126,13 @@ if [[ "$SELECTED_INDEX" -eq 0 ]]; then
     format_selector="$format_id"
   fi
 
-  yt-dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -f "$format_selector" --merge-output-format mp4 --embed-thumbnail --add-metadata --progress -o "$DEST/%(title)s.%(ext)s" "$URL"
+  run_yt_dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -f "$format_selector" --merge-output-format mp4 --embed-thumbnail --add-metadata --progress --newline -o "$DEST/%(title)s.%(ext)s" "$URL"
 else
   quality_values=("320K" "256K" "192K" "128K")
   quality_labels=("320 kbps" "256 kbps" "192 kbps" "128 kbps")
   select_option "Choose MP3 quality" "${quality_labels[@]}" || exit 0
   audio_quality="${quality_values[$SELECTED_INDEX]}"
-  yt-dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -x --audio-format mp3 --audio-quality "$audio_quality" --embed-thumbnail --add-metadata --progress -o "$DEST/%(title)s.%(ext)s" "$URL"
+  run_yt_dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -x --audio-format mp3 --audio-quality "$audio_quality" --embed-thumbnail --add-metadata --progress --newline -o "$DEST/%(title)s.%(ext)s" "$URL"
 fi
 
 echo "Saved to $DEST"
