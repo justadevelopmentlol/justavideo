@@ -6,16 +6,22 @@ function Invoke-ColoredYtDlp {
     param([string[]]$Arguments)
     & yt-dlp @Arguments 2>&1 | ForEach-Object {
         $line = $_.ToString()
-        $color = "White"
-        if ($line.StartsWith("[youtube]")) { $color = "Red" }
-        elseif ($line.StartsWith("[info]")) { $color = "Yellow" }
-        elseif ($line.StartsWith("[download]")) { $color = "Blue" }
-        elseif ($line.StartsWith("[error]") -or $line.StartsWith("ERROR:")) { $color = "Red" }
-        elseif ($line.StartsWith("[Metadata]") -or $line.StartsWith("[metadata]")) { $color = "Magenta" }
-        elseif ($line.StartsWith("[ExtractAudio]") -or $line.StartsWith("[Merger]")) { $color = "Cyan" }
-        elseif ($line.StartsWith("[warning]")) { $color = "Yellow" }
-        elseif ($line.StartsWith("[debug]")) { $color = "DarkGray" }
-        Write-Host $line -ForegroundColor $color
+        $tags = @{
+            "[youtube]" = "Red"; "[info]" = "Yellow"; "[download]" = "Blue";
+            "[error]" = "Red"; "[Metadata]" = "Magenta"; "[metadata]" = "Magenta";
+            "[ExtractAudio]" = "Cyan"; "[Merger]" = "Cyan"; "[warning]" = "Yellow"; "[debug]" = "DarkGray"
+        }
+        $matched = $false
+        foreach ($tag in $tags.Keys) {
+            if ($line.StartsWith($tag)) {
+                Write-Host "[" -ForegroundColor White -NoNewline
+                Write-Host $tag.Trim("[]") -ForegroundColor $tags[$tag] -NoNewline
+                Write-Host "]$($line.Substring($tag.Length))" -ForegroundColor White
+                $matched = $true
+                break
+            }
+        }
+        if (-not $matched) { Write-Host $line -ForegroundColor White }
     }
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
@@ -42,7 +48,7 @@ function Select-Option {
         for ($index = 0; $index -lt $Options.Count; $index++) {
             $prefix = if ($index -eq $selected) { "›" } else { " " }
             if ($index -eq $selected) {
-                Write-Host "$prefix $($Options[$index])" -ForegroundColor Green
+                Write-Host "$prefix $($Options[$index])" -ForegroundColor Blue
             } else {
                 Write-Host "$prefix $($Options[$index])" -ForegroundColor White
             }
