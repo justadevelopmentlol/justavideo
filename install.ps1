@@ -6,12 +6,15 @@ $BinDir = "$InstallDir\bin"
 
 function Show-Progress {
     param([string]$Message)
-    Write-Host -NoNewline "$Message "
-    for ($i = 0; $i -lt 20; $i++) {
-        Write-Host -NoNewline "#"
+    $steps = 24
+    $bar = ""
+    for ($i = 1; $i -le $steps; $i++) {
+        $bar += "="
+        $percent = [math]::Floor($i * 100 / $steps)
+        Write-Host -NoNewline ("`r{0} [{1,-24}] {2,3}%" -f $Message, $bar, $percent)
         Start-Sleep -Milliseconds 20
     }
-    Write-Host " done"
+    Write-Host ""
 }
 
 Write-Host "Installing ryz for windows"
