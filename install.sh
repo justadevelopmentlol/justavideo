@@ -49,6 +49,7 @@ if [[ "$PLATFORM" == "macos" ]]; then
   fi
   progress "Installing yt-dlp and ffmpeg"
   brew install yt-dlp ffmpeg > /dev/null 2>&1
+  brew upgrade yt-dlp > /dev/null 2>&1 || true
 else
   if command -v apt-get &> /dev/null; then
     progress "Installing yt-dlp and ffmpeg"
