@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$RepoRaw = "https://raw.githubusercontent.com/realryz/ryz/main/repo"
+$RepoRaw = "https://raw.githubusercontent.com/realryz/justavideo/refs/heads/main/install.ps1"
 $InstallDir = "$HOME\.ryz"
 $BinDir = "$InstallDir\bin"
 
