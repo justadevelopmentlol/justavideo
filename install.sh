@@ -91,8 +91,8 @@ if [[ "$IS_ZSH" == true ]]; then
 fi
 
 echo ""
-echo "ryz installed successfully"
+echo "justavideo installed successfully"
 echo "Restart your terminal or run: source $SHELL_RC"
 echo ""
 echo "Usage:"
-echo "  ryz https://youtu.be/VIDEO_ID"
+echo "justavideo https://youtu.be/VIDEO_ID"
