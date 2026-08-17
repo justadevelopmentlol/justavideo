@@ -74,7 +74,7 @@ if [[ "$SELECTED_INDEX" -eq 0 ]]; then
     format_ids+=("$format_id")
     format_labels+=("$resolution mp4")
     format_modes+=("$mode")
-  done < <(yt-dlp --no-playlist -F "$URL" | awk '$1 != "ID" && $2 == "mp4" && $3 ~ /^[0-9]+x[0-9]+$/ && $0 !~ /images/ && !seen[$3]++ { mode = ($0 ~ /video only/) ? "video-only" : "with-audio"; print $1 "\t" $3 "\t" mode }')
+  done < <(yt-dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -F "$URL" | awk '$1 != "ID" && $2 == "mp4" && $3 ~ /^[0-9]+x[0-9]+$/ && $0 !~ /images/ && !seen[$3]++ { mode = ($0 ~ /video only/) ? "video-only" : "with-audio"; print $1 "\t" $3 "\t" mode }')
 
   if [[ ${#format_labels[@]} -eq 0 ]]; then
     echo "No MP4 formats were found."
@@ -90,13 +90,13 @@ if [[ "$SELECTED_INDEX" -eq 0 ]]; then
     format_selector="$format_id"
   fi
 
-  yt-dlp --no-playlist -f "$format_selector" --merge-output-format mp4 --embed-thumbnail --add-metadata --progress -o "$DEST/%(title)s.%(ext)s" "$URL"
+  yt-dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -f "$format_selector" --merge-output-format mp4 --embed-thumbnail --add-metadata --progress -o "$DEST/%(title)s.%(ext)s" "$URL"
 else
   quality_values=("320K" "256K" "192K" "128K")
   quality_labels=("320 kbps" "256 kbps" "192 kbps" "128 kbps")
   select_option "Choose MP3 quality" "${quality_labels[@]}" || exit 0
   audio_quality="${quality_values[$SELECTED_INDEX]}"
-  yt-dlp --no-playlist -x --audio-format mp3 --audio-quality "$audio_quality" --embed-thumbnail --add-metadata --progress -o "$DEST/%(title)s.%(ext)s" "$URL"
+  yt-dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -x --audio-format mp3 --audio-quality "$audio_quality" --embed-thumbnail --add-metadata --progress -o "$DEST/%(title)s.%(ext)s" "$URL"
 fi
 
 echo "Saved to $DEST"
