@@ -40,7 +40,7 @@ $mode = Select-Option "Choose a format" @("MP4 video", "MP3 audio")
 New-Item -ItemType Directory -Force -Path $Dest | Out-Null
 
 if ($mode -eq 0) {
-    $formats = @(& yt-dlp --no-playlist -F $Url | ForEach-Object {
+    $formats = @(& yt-dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -F $Url | ForEach-Object {
         if ($_ -match '^\s*(\S+)\s+(mp4)\s+(\d+x\d+)\s+(.*)$' -and $Matches[4] -notmatch 'images') {
             [PSCustomObject]@{ Id = $Matches[1]; Label = "$($Matches[3]) mp4"; VideoOnly = $Matches[4] -match 'video only'; Resolution = $Matches[3] }
         }
@@ -49,12 +49,12 @@ if ($mode -eq 0) {
     if ($formats.Count -eq 0) { Write-Host "No MP4 formats were found."; exit 1 }
     $format = $formats[(Select-Option "Choose a resolution" ($formats | ForEach-Object { $_.Label }))]
     $selector = if ($format.VideoOnly) { "$($format.Id)+bestaudio[ext=m4a]/$($format.Id)+bestaudio/$($format.Id)" } else { $format.Id }
-    & yt-dlp --no-playlist -f $selector --merge-output-format mp4 --embed-thumbnail --add-metadata --progress -o "$Dest\%(title)s.%(ext)s" $Url
+    & yt-dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -f $selector --merge-output-format mp4 --embed-thumbnail --add-metadata --progress -o "$Dest\%(title)s.%(ext)s" $Url
 } else {
     $qualities = @("320 kbps", "256 kbps", "192 kbps", "128 kbps")
     $quality = (Select-Option "Choose MP3 quality" $qualities)
     $bitrates = @("320K", "256K", "192K", "128K")
-    & yt-dlp --no-playlist -x --audio-format mp3 --audio-quality $bitrates[$quality] --embed-thumbnail --add-metadata --progress -o "$Dest\%(title)s.%(ext)s" $Url
+    & yt-dlp --extractor-args "youtube:player_client=web_embedded" --no-playlist -x --audio-format mp3 --audio-quality $bitrates[$quality] --embed-thumbnail --add-metadata --progress -o "$Dest\%(title)s.%(ext)s" $Url
 }
 
 Write-Host "Saved to $Dest"
