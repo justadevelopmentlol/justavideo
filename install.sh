@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -e
 
-REPO_RAW="https://raw.githubusercontent.com/realryz/justavideo/refs/heads/main/install.sh"
-INSTALL_DIR="$HOME/.ryz"
+DOWNLOAD_BASE="https://cloud.ryz.wtf"
+INSTALL_DIR="$HOME/.justavideo"
 BIN_DIR="$INSTALL_DIR/bin"
 
 progress() {
@@ -34,7 +34,7 @@ if [[ "$PLATFORM" == "unknown" ]]; then
   exit 1
 fi
 
-echo "Installing ryz for $PLATFORM"
+echo "Installing justavideo for $PLATFORM"
 echo ""
 
 if [[ "$PLATFORM" == "macos" ]]; then
@@ -69,33 +69,25 @@ else
 fi
 
 mkdir -p "$BIN_DIR"
-progress "Downloading ryz"
-curl -fsSL "$REPO_RAW/bin/ryz" -o "$BIN_DIR/ryz"
-chmod +x "$BIN_DIR/ryz"
+progress "Downloading justavideo"
+curl -fsSL "$DOWNLOAD_BASE/justavideo" -o "$BIN_DIR/justavideo"
+chmod +x "$BIN_DIR/justavideo"
 
-SHELL_RC="$HOME/.zshrc"
-IS_ZSH=true
-if [[ "$SHELL" != *zsh* ]]; then
-  SHELL_RC="$HOME/.bash_profile"
-  IS_ZSH=false
-fi
-
-touch "$SHELL_RC"
-
-if ! grep -q "$BIN_DIR" "$SHELL_RC" 2>/dev/null; then
-  echo "" >> "$SHELL_RC"
-  echo "export PATH=\"$BIN_DIR:\$PATH\"" >> "$SHELL_RC"
-fi
-
-if [[ "$IS_ZSH" == true ]]; then
-  if ! grep -q "alias ryz=" "$SHELL_RC" 2>/dev/null; then
-    echo "alias ryz=\"noglob $BIN_DIR/ryz\"" >> "$SHELL_RC"
+for SHELL_RC in "$HOME/.zshrc" "$HOME/.bashrc" "$HOME/.bash_profile" "$HOME/.profile"; do
+  touch "$SHELL_RC"
+  if ! grep -Fq "$BIN_DIR" "$SHELL_RC" 2>/dev/null; then
+    echo "" >> "$SHELL_RC"
+    echo "export PATH=\"$BIN_DIR:\$PATH\"" >> "$SHELL_RC"
   fi
+done
+
+if ! grep -Fq "alias justavideo=" "$HOME/.zshrc" 2>/dev/null; then
+  echo "alias justavideo=\"noglob $BIN_DIR/justavideo\"" >> "$HOME/.zshrc"
 fi
 
 echo ""
 echo "justavideo installed successfully"
-echo "Restart your terminal or run: source $SHELL_RC"
+echo "Open a new terminal window."
 echo ""
 echo "Usage:"
 echo "justavideo https://youtu.be/VIDEO_ID"
