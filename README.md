@@ -19,7 +19,7 @@ For more installation options, uninstall steps, and troubleshooting.
 
     **Windows (Recommended):**
     ```powershell
-    irm https://cloud.ryz.wtf/install.ps1 | Rex
+    irm https://cloud.ryz.wtf/install.ps1 | iex
 
 2. Open terminal or cmd and run `justavideo`.
 
