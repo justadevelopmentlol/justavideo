@@ -44,8 +44,8 @@ if ($CurrentPath -notlike "*$BinDir*") {
 }
 
 Write-Host ""
-Write-Host "ryz installed successfully"
+Write-Host "justavideo installed successfully"
 Write-Host "Restart your terminal for PATH changes to take effect"
 Write-Host ""
 Write-Host "Usage:"
-Write-Host "  ryz https://youtu.be/VIDEO_ID"
+Write-Host "  justavideo https://youtu.be/VIDEO_ID"
