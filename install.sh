@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-REPO_RAW=""
+REPO_RAW="https://raw.githubusercontent.com/realryz/justavideo/refs/heads/main/install.sh"
 INSTALL_DIR="$HOME/.ryz"
 BIN_DIR="$INSTALL_DIR/bin"
 
