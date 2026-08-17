@@ -1,7 +1,7 @@
 $ErrorActionPreference = "Stop"
 
-$RepoRaw = "https://raw.githubusercontent.com/realryz/justavideo/refs/heads/main/install.ps1"
-$InstallDir = "$HOME\.ryz"
+$DownloadBase = "https://cloud.ryz.wtf"
+$InstallDir = "$HOME\.justavideo"
 $BinDir = "$InstallDir\bin"
 
 function Show-Progress {
@@ -17,7 +17,7 @@ function Show-Progress {
     Write-Host ""
 }
 
-Write-Host "Installing ryz for windows"
+Write-Host "Installing justavideo for Windows"
 Write-Host ""
 
 if (Get-Command winget -ErrorAction SilentlyContinue) {
@@ -35,11 +35,11 @@ if (Get-Command winget -ErrorAction SilentlyContinue) {
 
 New-Item -ItemType Directory -Force -Path $BinDir | Out-Null
 
-Show-Progress "Downloading ryz"
-Invoke-WebRequest -Uri "$RepoRaw/bin/ryz.ps1" -OutFile "$BinDir\ryz.ps1"
+Show-Progress "Downloading justavideo"
+Invoke-WebRequest -Uri "$DownloadBase/justavideo.ps1" -OutFile "$BinDir\justavideo.ps1"
 
-$WrapperPath = "$BinDir\ryz.cmd"
-"@echo off`r`npowershell -NoProfile -ExecutionPolicy Bypass -File `"$BinDir\ryz.ps1`" %*" | Set-Content -Path $WrapperPath -Encoding ASCII
+$WrapperPath = "$BinDir\justavideo.cmd"
+"@echo off`r`npowershell -NoProfile -ExecutionPolicy Bypass -File `"$BinDir\justavideo.ps1`" %*" | Set-Content -Path $WrapperPath -Encoding ASCII
 
 $CurrentPath = [Environment]::GetEnvironmentVariable("Path", "User")
 if ($CurrentPath -notlike "*$BinDir*") {
