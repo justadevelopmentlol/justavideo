@@ -4,7 +4,6 @@ set -e
 
 RED=$'\033[31m'
 YELLOW=$'\033[33m'
-GREEN=$'\033[32m'
 BLUE=$'\033[34m'
 MAGENTA=$'\033[35m'
 CYAN=$'\033[36m'
@@ -34,20 +33,24 @@ SELECTED_INDEX=0
 SELECTED_VALUE=""
 
 colorize_output() {
-  local line color
+  local line color label length rest
   while IFS= read -r line; do
-    color="$WHITE"
     case "$line" in
-      \[youtube\]*) color="$RED";;
-      \[info\]*) color="$YELLOW";;
-      \[download\]*) color="$BLUE";;
-      \[error\]*|ERROR:*) color="$RED";;
-      \[Metadata\]*|\[metadata\]*) color="$MAGENTA";;
-      \[ExtractAudio\]*|\[Merger\]*) color="$CYAN";;
-      \[warning\]*) color="$YELLOW";;
-      \[debug\]*) color="$GRAY";;
+      \[youtube\]*) color="$RED"; label="youtube"; length=9;;
+      \[info\]*) color="$YELLOW"; label="info"; length=6;;
+      \[download\]*) color="$BLUE"; label="download"; length=10;;
+      \[error\]*) color="$RED"; label="error"; length=7;;
+      \[Metadata\]*) color="$MAGENTA"; label="Metadata"; length=10;;
+      \[metadata\]*) color="$MAGENTA"; label="metadata"; length=10;;
+      \[ExtractAudio\]*) color="$CYAN"; label="ExtractAudio"; length=14;;
+      \[Merger\]*) color="$CYAN"; label="Merger"; length=8;;
+      \[warning\]*) color="$YELLOW"; label="warning"; length=9;;
+      \[debug\]*) color="$GRAY"; label="debug"; length=7;;
+      ERROR:*) printf '%s%s%s%s\n' "$RED" "$line" "$RESET" "$RESET"; continue;;
+      *) printf '%s%s%s\n' "$WHITE" "$line" "$RESET"; continue;;
     esac
-    printf '%s%s%s\n' "$color" "$line" "$RESET"
+    rest="${line:$length}"
+    printf '%s[%s%s%s]%s%s%s\n' "$WHITE" "$color" "$label" "$WHITE" "$WHITE" "$rest" "$RESET"
   done
 }
 
@@ -70,7 +73,7 @@ select_option() {
     printf '\033[2J\033[H%s\nUse the arrow keys and Enter. Press q to cancel.\n\n' "$title"
     for index in "${!options[@]}"; do
       if [[ $index -eq $selected ]]; then
-        printf '%s› %s%s\n' "$GREEN" "${options[$index]}" "$RESET"
+        printf '%s› %s%s\n' "$BLUE" "${options[$index]}" "$RESET"
       else
         printf '  %s\n' "${options[$index]}"
       fi
