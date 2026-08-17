@@ -23,8 +23,6 @@ For more installation options, uninstall steps, and troubleshooting.
 
 2. Open terminal or cmd and run `justavideo`.
 
-<br/>
-
 ### Privacy safeguards
 
 We have implemented several safeguards to protect your data, including limited retention periods for sensitive information, restricted access to user session data.
