@@ -1,4 +1,4 @@
-# Claude Code
+# Justavideo
 
 ![PowerShell](https://img.shields.io/badge/PowerShell-%235391FE.svg?style=for-the-badge&logo=powershell&logoColor=white) ![Shell Script](https://img.shields.io/badge/shell_script-%23121011.svg?style=for-the-badge&logo=gnu-bash&logoColor=white)
 
@@ -23,12 +23,17 @@ For more installation options, uninstall steps, and troubleshooting.
 
 2. Open terminal or cmd and run `justavideo`.
 
+<br/>
+
+### Privacy safeguards
+
+We have implemented several safeguards to protect your data, including limited retention periods for sensitive information, restricted access to user session data.
+
+<br/>
+   
 <p align="center">
   <a href="https://ryz.wtf"><img src="https://img.shields.io/badge/ryz.wtf-181a1e?style=for-the-badge&logo=googlechrome&logoColor=FFFFFF" alt="Website" /></a>
   <a href="https://discord.com/users/"><img src="https://img.shields.io/badge/discord-181a1e?style=for-the-badge&logo=discord&logoColor=FFFFFF" alt="Discord" /></a>
   <a href="mailto:hey@ryz.wtf"><img src="https://img.shields.io/badge/hey@ryz.wtf-181a1e?style=for-the-badge&logo=maildotru&logoColor=FFFFFF" alt="Email" /></a>
 </p>
 
-### Privacy safeguards
-
-We have implemented several safeguards to protect your data, including limited retention periods for sensitive information, restricted access to user session data.
